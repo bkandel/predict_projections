@@ -22,4 +22,4 @@ $sccan --svd network[${DATADIR}${VOI}Train.mha,${TEMPLATEDIR}ADNI_gm_mask_trimme
 	     -o ${OUTDIR}${VOI}Sparse${SPARSITY}Cluster${CLUSTER}Train.nii.gz \
 	     -r 0 \
 	     -p 0 \
- #	     > ${OUTDIR}${VOI}Sparse${SPARSITY}Cluster${CLUSTER}_log.txt
+ 	     > ${OUTDIR}${VOI}Sparse${SPARSITY}Cluster${CLUSTER}_log.txt
