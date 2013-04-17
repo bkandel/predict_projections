@@ -1,17 +1,17 @@
 regress.projections <- function(input.train, input.test, demog.train, demog.test, 
                vector.names, mask, outcome, covariates = "1", dim = 3, method = "optimal" )
 {
-  input.train <- decostand( input.train, method = "standardize", MARGIN = 2 ) 
-  input.test <- decostand( input.test, method = "standardize", MARGIN = 2 )
+  input.train <- decostand( as.matrix(input.train), method = "standardize", MARGIN = 2 ) 
+  input.test <- decostand( as.matrix(input.test), method = "standardize", MARGIN = 2 )
   input.train[ is.nan( input.train ) ] <- 0
   input.test[ is.nan( input.test ) ] <- 0
   projections.train <- matrix( rep( 0, length( vector.names ) * nrow( demog.train )), 
                                nrow = nrow(input.train), ncol = length( vector.names ) ) 
   projections.test <- matrix( rep ( 0, length( vector.names ) * nrow (demog.test ) ), 
                               nrow = nrow( input.test ), ncol = length(vector.names ) ) 
-  colnames(projections.train) <- vector.names
-  colnames(projections.test)  <- vector.names
-  for ( i in c(1:length( vector.names ) )
+  colnames(projections.train) <- basename(vector.names) # using full path for names of columns confuses R
+  colnames(projections.test)  <- basename(vector.names)
+  for ( i in c(1:length( vector.names ) ) )
   {
     if( !file.exists(vector.names[i]) ) 
     {
@@ -39,21 +39,22 @@ regress.projections <- function(input.train, input.test, demog.train, demog.test
     my.formula <- base.formula
     for ( i in 1:length(vector.names))
     {
-      my.formula <- paste( my.formula, "+", vector.names[i] )
+      my.formula <- paste( my.formula, "+", basename(vector.names[i]) )
     }
-    lm.train <- lm( my.formula, demog.train )
+    lm.train <- lm( as.formula(my.formula), demog.train )
   }  else if( method == "optimal" ) {
     formula.lo <- base.formula
     formula.hi <- formula.lo
     for ( i in 1:length(vector.names))
     {
-      formula.hi <- paste(formula.hi, "+", vector.names[i] )
+      formula.hi <- paste(formula.hi, "+", basename(vector.names[i]) )
     }
     formula.lo <- as.formula(formula.lo)
     formula.hi <- as.formula(formula.hi)
-    lm.initial <- lm( formula.lo, demog.train )
-    model.optimal <- stepAIC( lm.initial, scope=list( lower=formula.low, upper=formula.hi), 
-                              direction=c("both"), k = log(nrow(demog.train)), trace=0)
+    lm.initial <- lm( as.formula(formula.lo), demog.train )
+    model.optimal <- stepAIC( lm.initial, 
+                              scope=list( lower=as.formula(formula.lo), upper=as.formula(formula.hi)), 
+                              direction=c("both"), k = log(nrow(demog.train)), trace=1)
     lm.train <- lm( model.optimal$call, demog.train )
   } else stop("method must be either 'optimal' or 'all'.")
   vectors.used <- rownames(summary(lm.train)$coefficients)

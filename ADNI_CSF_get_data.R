@@ -69,5 +69,5 @@ write(as.matrix(demogWithMRIInfo$fileNames[-trainingRows]),
       file = "../demog/ADNICSFPredictionNamesTest.txt")
 write.csv( demogWithMRIInfo$allAbetas[-trainingRows], 
            file = "../demog/ADNICSFPredictionAbetaValuesTest.csv", row.names = FALSE)
-write.csv( demogWithMRIInfo[trainingRows], file = "../demog/ADNICSFPredictionDemogTrain.csv", row.names = FALSE )
-write.csv( demogWithMRIInfo[-trainingRows], file = "../demog/ADNICSFPredictionDemogTest.csv", row.names = FALSE )
+write.csv( demogWithMRIInfo[trainingRows, ], file = "../demog/ADNICSFPredictionDemogTrain.csv", row.names = FALSE )
+write.csv( demogWithMRIInfo[-trainingRows,], file = "../demog/ADNICSFPredictionDemogTest.csv", row.names = FALSE )
